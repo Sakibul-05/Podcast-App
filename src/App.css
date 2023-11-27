@@ -107,6 +107,7 @@ label {
 .episodes-container {
   /* border: 2px solid var(--white); */
   margin-top: 1rem;
+  padding-bottom: 5rem;
 }
 
 .episodes-row {
@@ -162,6 +163,7 @@ label {
 
 .custom-player-container {
   /* border: 2px solid white; */
+  /* margin-top: 5rem; */
   padding: 0 5rem;
 }
 

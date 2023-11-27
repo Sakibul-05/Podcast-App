@@ -5,14 +5,17 @@ import { db } from "../firebase";
 import { setPodcasts } from "../slices/podcastSlice";
 import PodcastCard from "../components/CommonComponents/Podcast/PodcastCart/PodcastCard";
 import Input from "../components/CommonComponents/Input/Input";
+import Loader from "../components/CommonComponents/Loader";
 
 const PodcastsPage = () => {
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { podcasts } = useSelector((store) => store.podcasts);
   console.log("podcasts=>", podcasts);
 
   useEffect(() => {
+    setIsLoading(true);
     const unsubscribe = onSnapshot(
       query(collection(db, "podcasts")),
       (querySnapShot) => {
@@ -21,6 +24,7 @@ const PodcastsPage = () => {
           podcastsData.push({ id: doc.id, ...doc.data() });
         });
         dispatch(setPodcasts(podcastsData));
+        setIsLoading(false);
       },
       (error) => {
         console.log("Error getting documents", error);
@@ -46,20 +50,49 @@ const PodcastsPage = () => {
         setState={setSearch}
         required={true}
       />
-      {filteredPodcasts.length > 0 ? (
-        <div className="podcast-flex">
-          {filteredPodcasts.map((item) => (
-            <PodcastCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              displayImage={item.displayImage}
-            />
-          ))}
-        </div>
+      {isLoading ? (
+        <Loader />
       ) : (
         <>
-          <p>{search ? "Not Found" : "No Podcasts Available"}</p>
+          {search ? (
+            <div className="podcast-flex">
+              {filteredPodcasts.length > 0 ? (
+                <>
+                  {filteredPodcasts.map((item) => (
+                    <PodcastCard
+                      key={item.id}
+                      id={item.id}
+                      title={item.title}
+                      displayImage={item.displayImage}
+                    />
+                  ))}
+                </>
+              ) : (
+                <>
+                  <p>Not Found!</p>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="podcast-flex">
+              {podcasts.length > 0 ? (
+                <>
+                  {podcasts.map((item) => (
+                    <PodcastCard
+                      key={item.id}
+                      id={item.id}
+                      title={item.title}
+                      displayImage={item.displayImage}
+                    />
+                  ))}
+                </>
+              ) : (
+                <>
+                  <p>No Podcasts Available</p>
+                </>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

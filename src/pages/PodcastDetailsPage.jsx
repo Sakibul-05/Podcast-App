@@ -14,8 +14,8 @@ const PodcastDetailsPage = () => {
   const [episodes, setEpisodes] = useState([]);
   const [playingFile, setPlayingFile] = useState("");
 
-  console.log("episodes:", episodes);
-  console.log("podcastDetails:", podcastDetails);
+  // console.log("episodes:", episodes);
+  // console.log("podcastDetails:", podcastDetails);
   useEffect(() => {
     if (podcastId) {
       //fetch data
@@ -25,7 +25,7 @@ const PodcastDetailsPage = () => {
 
         try {
           if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
+            // console.log("Document data:", docSnap.data());
             setPodcastDetails({ id: podcastId, ...docSnap.data() }); //whatever object got that destructure
             // toast.success("Podcast Found!");
           } else {
@@ -91,7 +91,7 @@ const PodcastDetailsPage = () => {
                     <div className="title-desc-button-flex">
                       <h3>{episode.title}</h3>
                       <p>{episode.description}</p>
-                      <button onClick={() => setPlayingFile(episode.audioURL)}>
+                      <button onClick={() => setPlayingFile(episode)}>
                         Play
                       </button>
                     </div>
@@ -114,7 +114,6 @@ const PodcastDetailsPage = () => {
       <div className="custom-player-container">
         {playingFile && (
           <AudioPlaer
-            title={podcastDetails.title}
             playingFile={playingFile}
             displayImage={podcastDetails.displayImage}
           />

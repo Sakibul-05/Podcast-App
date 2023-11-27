@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
+import timeConverter from "../../../../functions/timeConverter";
 
-const AudioPlaer = ({ title, playingFile, displayImage }) => {
+const AudioPlayer = ({ playingFile, displayImage }) => {
+  const { title, audioURL } = playingFile;
   const audioRef = useRef();
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -10,61 +12,63 @@ const AudioPlaer = ({ title, playingFile, displayImage }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  function hnadleDuration(e) {
+  useEffect(() => {
+    if (audioURL) {
+      audioRef.current.load();
+      audioRef.current.addEventListener("canplaythrough", handleCanPlayThrough);
+    }
+
+    return () => {
+      if (audioRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        audioRef.current.removeEventListener(
+          "canplaythrough",
+          handleCanPlayThrough
+        );
+      }
+    };
+  }, [audioURL]);
+
+  const handleCanPlayThrough = () => {
+    // The audio has loaded sufficiently; you can play it now
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
+
+  useEffect(() => {
+    audioRef.current.volume = isMuted ? 0 : volume;
+  }, [isMuted, volume]);
+
+  const handleDurationChange = (e) => {
     setCurrentTime(e.target.value);
     audioRef.current.currentTime = e.target.value;
-  }
+  };
 
-  function hnadleVolume(e) {
+  const handleVolumeChange = (e) => {
     setVolume(e.target.value);
-    audioRef.current.volume = e.target.value;
-  }
+  };
 
-  // useEffect(() => {
-  //   setDuration(audioRef.current.duration);
-  // }, [audioRef]);
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
-  function handleTimeUpdate() {
+  const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
-  }
+  };
 
-  function handleLoadedMetadata() {
+  const handleLoadedMetadata = () => {
     setDuration(audioRef.current.duration);
-  }
+  };
 
-  function handleEnded() {
+  const handleEnded = () => {
     setCurrentTime(0);
     setIsPlaying(false);
-  }
-
-  // useEffect(() => {
-  //   const audio = audioRef.current;
-  //   audio.addEventListener("timeupdate", handleTimeUpdate);
-  //   audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-  //   audio.addEventListener("ended", handleEnded);
-
-  //   return () => {
-  //     audio.removeListener("timeupdate", handleTimeUpdate);
-  //     audio.removeListener("loadedmetadata", handleLoadedMetadata);
-  //     audio.removeListener("ended", handleEnded);
-  //   };
-  // }, [audioRef]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (isMuted) {
-      audioRef.current.volume = 0;
-    } else {
-      audioRef.current.volume = volume;
-    }
-  }, [isMuted, volume]);
+  };
 
   return (
     <div className="custom-audio-player">
@@ -73,7 +77,7 @@ const AudioPlaer = ({ title, playingFile, displayImage }) => {
           <img
             src={displayImage}
             alt={title}
-            className="custome-audio-player-image"
+            className="custom-audio-player-image"
           />
         </div>
         <div className="title-container">
@@ -81,38 +85,40 @@ const AudioPlaer = ({ title, playingFile, displayImage }) => {
         </div>
       </div>
       <div className="flex-center">
-        <audio ref={audioRef} src={playingFile}></audio>
-        <div onClick={() => setIsPlaying(!isPlaying)}>
+        <audio
+          ref={audioRef}
+          src={audioURL}
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onEnded={handleEnded}
+        ></audio>
+        <div onClick={handlePlayPause}>
           {isPlaying ? <FaPause /> : <FaPlay />}
         </div>
         <div className="duration-flex">
-          <p>0:00</p>
+          <p>{timeConverter(currentTime)}</p>
           <input
             type="range"
             value={currentTime}
             max={duration}
             step={0.01}
-            onChange={hnadleDuration}
+            onChange={handleDurationChange}
             className="duration-range"
           />
-          <p>-21:00</p>
+          <p>{timeConverter(duration)}</p>
         </div>
       </div>
       <div className="flex-end">
-        <span>
-          {isMuted ? (
-            <FaVolumeMute onClick={() => setIsMuted(!isMuted)} />
-          ) : (
-            <FaVolumeUp onClick={() => setIsMuted(!isMuted)} />
-          )}
+        <span onClick={() => setIsMuted(!isMuted)}>
+          {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
         </span>
         <input
           type="range"
-          value={volume}
+          value={isMuted ? 0 : volume}
           max={1}
           min={0}
           step={0.1}
-          onChange={hnadleVolume}
+          onChange={handleVolumeChange}
           className="volume-range"
         />
       </div>
@@ -120,4 +126,4 @@ const AudioPlaer = ({ title, playingFile, displayImage }) => {
   );
 };
 
-export default AudioPlaer;
+export default AudioPlayer;

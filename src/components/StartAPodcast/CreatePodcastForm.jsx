@@ -15,8 +15,8 @@ const CreatePodcastForm = () => {
   const [displayImage, setDisplayImage] = useState();
   const [bannerImage, setBannerImage] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
 
   async function handleSubmit() {
     setIsLoading(true);
