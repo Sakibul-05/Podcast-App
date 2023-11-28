@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import Input from "../../CommonComponents/Input/Input";
 import Button from "../../CommonComponents/Button/Button";
-import { db, storage, auth } from "../../../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { db, auth } from "../../../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../slices/userSlice";
@@ -36,7 +33,7 @@ const SignupForm = ({ isLoading, setIsLoading }) => {
         const user = userCredential.user;
         console.log("User: ", user); // firebase user object
 
-        // saving user's details
+        // saving user's details in the "users" collection
         await setDoc(doc(db, "users", user.uid), {
           name: fullName,
           email: user.email,

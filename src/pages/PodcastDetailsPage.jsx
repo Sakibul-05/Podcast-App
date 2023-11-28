@@ -67,7 +67,7 @@ const PodcastDetailsPage = () => {
         <>
           <div className="title-and-createButton-flex">
             <h1 className="podcast-title">{podcastDetails.title}</h1>
-            {/* when user login with different account user can't see the button */}
+            {/* who create podcast only that user can create episodes inside that podcast */}
             {podcastDetails.createdBy === auth.currentUser.uid && (
               <Button
                 text="Create Episode"

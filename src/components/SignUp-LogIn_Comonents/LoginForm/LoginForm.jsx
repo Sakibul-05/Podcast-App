@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import Input from "../../CommonComponents/Input/Input";
 import Button from "../../CommonComponents/Button/Button";
-import { db, storage, auth } from "../../../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { db, auth } from "../../../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +28,7 @@ const LoginForm = ({ isLoading, setIsLoading }) => {
       const user = userCredential.user;
       console.log("User: ", user); // firebase user object
 
-      // saving user's details
+      // getting user's details from the "users" collection
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const userData = userDoc.data();
       console.log("userData: ", userData);

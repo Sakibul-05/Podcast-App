@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Input from "../CommonComponents/Input/Input";
 import Button from "../CommonComponents/Button/Button";
 import FileInput from "../CommonComponents/Input/FileInput";
 import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { toast } from "react-toastify";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 
 const CreatePodcastForm = () => {
   const [title, setTitle] = useState("");
@@ -51,7 +49,7 @@ const CreatePodcastForm = () => {
         };
 
         //2. create a new doc in a new collection called podcasts
-        const docRef = await addDoc(collection(db, "podcasts"), podcastData);
+        await addDoc(collection(db, "podcasts"), podcastData);
 
         //after done all the asynchronous operation
         setTitle("");
@@ -59,7 +57,7 @@ const CreatePodcastForm = () => {
         setDisplayImage(null);
         setBannerImage(null);
         setIsLoading(false);
-        toast.success("Image Uploaded");
+        toast.success("Podcast Created");
         //3. save this new podcasts episodes states in out podcasts
       } catch (error) {
         toast.error(error.message);
