@@ -57,9 +57,9 @@ const App = () => {
         <Routes>
           <Route path="/" exact element={<SignUpPage />} />
           <Route element={<PrivateRoutes />}>
+            <Route path="/podcasts" element={<PodcastsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/create-podcast" element={<CreatePodcastPage />} />
-            <Route path="/podcasts" element={<PodcastsPage />} />
             <Route
               path="/podcasts/:podcastId"
               element={<PodcastDetailsPage />}

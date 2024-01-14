@@ -44,8 +44,8 @@ const LoginForm = ({ isLoading, setIsLoading }) => {
       );
       setIsLoading(false);
       toast.success("Login Success");
-      // redirect to profile page after successful login
-      navigate("/profile");
+      // redirect to podcasts page after successful login
+      navigate("/podcasts");
     } catch (error) {
       console.log(error);
       setIsLoading(false);
